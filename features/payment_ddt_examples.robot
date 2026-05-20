@@ -43,6 +43,9 @@ DDT Positive Scenario Should Be Valid
     ELSE
         And BNPL Method Should Not Be Selectable Per Rule R2
         And BNPL Options Array Should Be Valid Per Rule R4
+        IF    '${scenario}' == 'bnpl_blocked_empty_options'
+            And BNPL Options Array Should Be Empty
+        END
     END
 
 

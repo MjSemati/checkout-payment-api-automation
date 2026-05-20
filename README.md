@@ -5,7 +5,7 @@
 ![Robot Framework](https://img.shields.io/badge/Robot%20Framework-7.x-00C0B5)
 ![Flask](https://img.shields.io/badge/fake%20server-Flask-000000)
 
-Robot Framework API test suite for the MyDigipay checkout **payment methods** endpoint (`GET /payment/`).
+Robot Framework API test suite for the MyDigipay checkout **payment methods** endpoint (`GET /payment`).
 
 > [!NOTE]
 > Validates JSON schema, types, business rules **R1–R7**, with **6 positive** and **6 negative** core scenarios (+ optional extended coverage).
@@ -108,7 +108,7 @@ python3 fake_server/app.py
 ```
 
 Server: `http://127.0.0.1:8080`  
-Endpoint: `GET /payment/?scenario=<name>&CellNumber=<phone>`
+Endpoint: `GET /payment?scenario=<name>&CellNumber=<phone>`
 
 ### 2. Try the sample checkout page (optional)
 
@@ -207,6 +207,9 @@ Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 | N4 | Negative | Missing required field `type` → schema R1 |
 | N5 | Negative | Wrong types (`id`, `is_clickable`) → R1 |
 | N6 | Negative | HTTP 500; fail fast |
+
+> [!NOTE]
+> Extended suite adds extra edge cases beyond the core set, including `N7` (clickable BNPL with empty `options`, Rule R4 violation).
 
 ---
 
@@ -344,7 +347,7 @@ And BNPL Business Rules Should Fail With Error    *Rule R5*
 - [ ] Robot reports: `log/report.html`, `log/log.html`, `log/output.xml` after a test run
 
 > [!IMPORTANT]
-> CI publishes reports as a downloadable artifact — see [CI](#ci-github-actions--bonus) below if you do not attach local `log/` files.
+> CI publishes reports as a downloadable artifact — see [CI](#ci-github-actions) below if you do not attach local `log/` files.
 
 ---
 
