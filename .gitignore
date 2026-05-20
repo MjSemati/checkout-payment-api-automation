@@ -3,8 +3,9 @@ __pycache__/
 venv/
 .venv/
 
-# Robot reports (add log/ to zip for submission)
+# Robot reports (local runs + email zips — not in repo)
 log/
+robot-reports*.zip
 
 # IDE
 .idea/
@@ -15,3 +16,6 @@ log/
 
 # Secrets
 .env
+
+# Private demo prep (local only — do not push)
+DEMO_PREP_GUIDE.md
