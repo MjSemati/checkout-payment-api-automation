@@ -1,0 +1,13 @@
+{
+  "http_status": 200,
+  "status": 200,
+  "payment_methods": [
+    {
+      "id": "1",
+      "type": "online",
+      "title": "Online Payment",
+      "is_clickable": "true",
+      "is_wallet": false
+    }
+  ]
+}

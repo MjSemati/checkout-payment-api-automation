@@ -1,0 +1,47 @@
+{
+  "http_status": 200,
+  "status": 200,
+  "payment_methods": [
+    {
+      "id": 1,
+      "type": "online",
+      "title": "Online Payment",
+      "is_clickable": true,
+      "is_wallet": false
+    },
+    {
+      "id": 11,
+      "type": "wallet",
+      "title": "Digital Wallet",
+      "is_clickable": true,
+      "is_wallet": true,
+      "source_id": 316
+    },
+    {
+      "id": 8,
+      "type": "bnpl",
+      "title": "BNPL Payment",
+      "is_clickable": true,
+      "is_wallet": false,
+      "source_id": 367,
+      "options": [
+        {
+          "source_id": 386,
+          "title": "1 installment",
+          "credit": 50000000,
+          "is_active": true,
+          "is_default": true,
+          "price_type": "CASH_PRICE"
+        },
+        {
+          "source_id": 387,
+          "title": "3 installments",
+          "credit": 409361033,
+          "is_active": true,
+          "is_default": false,
+          "price_type": "CREDIT_PRICE"
+        }
+      ]
+    }
+  ]
+}

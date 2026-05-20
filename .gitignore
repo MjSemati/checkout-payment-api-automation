@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+venv/
+.venv/
+
+# Robot reports (add log/ to zip for submission)
+log/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
+# Secrets
+.env
