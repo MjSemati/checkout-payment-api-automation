@@ -188,11 +188,29 @@ BNPL Options Array Should Be Valid Per Rule R4
 
 BNPL Business Rules Should Fail With Error
     [Arguments]    ${expected_error}
-    Run Keyword And Expect Error    ${expected_error}    Validate BNPL Business Rules    ${payment_methods}
+    Log    [NEGATIVE-CHECK][RULES] Expecting failure matching: ${expected_error}
+    ${status}    ${actual_error}=    Run Keyword And Ignore Error
+    ...    Validate BNPL Business Rules    ${payment_methods}
+    Log    [NEGATIVE-CHECK][RULES] Captured status=${status}
+    Log    [NEGATIVE-CHECK][RULES] Captured error=${actual_error}
+    Should Be Equal    ${status}    FAIL
+    ...    msg=[NEGATIVE-CHECK][RULES] Expected failure but keyword passed. Expected pattern: ${expected_error}
+    Should Match    ${actual_error}    ${expected_error}
+    ...    msg=[NEGATIVE-CHECK][RULES] Failure mismatch. Expected pattern: ${expected_error} | Actual: ${actual_error}
+    Log    [NEGATIVE-CHECK][RULES] Expected failure matched: ${expected_error}
 
 Payment Method Schema Should Fail With Error
     [Arguments]    ${expected_error}
-    Run Keyword And Expect Error    ${expected_error}    Validate Payment Method Schema    ${payment_methods}
+    Log    [NEGATIVE-CHECK][SCHEMA] Expecting failure matching: ${expected_error}
+    ${status}    ${actual_error}=    Run Keyword And Ignore Error
+    ...    Validate Payment Method Schema    ${payment_methods}
+    Log    [NEGATIVE-CHECK][SCHEMA] Captured status=${status}
+    Log    [NEGATIVE-CHECK][SCHEMA] Captured error=${actual_error}
+    Should Be Equal    ${status}    FAIL
+    ...    msg=[NEGATIVE-CHECK][SCHEMA] Expected failure but keyword passed. Expected pattern: ${expected_error}
+    Should Match    ${actual_error}    ${expected_error}
+    ...    msg=[NEGATIVE-CHECK][SCHEMA] Failure mismatch. Expected pattern: ${expected_error} | Actual: ${actual_error}
+    Log    [NEGATIVE-CHECK][SCHEMA] Expected failure matched: ${expected_error}
 
 HTTP Response Status Should Be
     [Arguments]    ${expected_status}
@@ -200,14 +218,32 @@ HTTP Response Status Should Be
 
 Request Should Fail Fast On HTTP Error
     [Arguments]    ${expected_status}=500
-    Run Keyword And Expect Error    *${expected_status}*    Validate Response Status Is Successful    ${response}    ${response_json}
+    ${expected_error}=    Set Variable    *${expected_status}*
+    Log    [NEGATIVE-CHECK][HTTP] Expecting failure matching: ${expected_error}
+    ${status}    ${actual_error}=    Run Keyword And Ignore Error
+    ...    Validate Response Status Is Successful    ${response}    ${response_json}
+    Log    [NEGATIVE-CHECK][HTTP] Captured status=${status}
+    Log    [NEGATIVE-CHECK][HTTP] Captured error=${actual_error}
+    Should Be Equal    ${status}    FAIL
+    ...    msg=[NEGATIVE-CHECK][HTTP] Expected failure but validation passed. Expected pattern: ${expected_error}
+    Should Match    ${actual_error}    ${expected_error}
+    ...    msg=[NEGATIVE-CHECK][HTTP] Failure mismatch. Expected pattern: ${expected_error} | Actual: ${actual_error}
+    Log    [NEGATIVE-CHECK][HTTP] Expected failure matched: ${expected_error}
 
 Request Should Fail Fast On Body Status Error
     [Arguments]    ${expected_body_status}=500
     Should Be Equal As Integers    ${response.status_code}    200    msg=HTTP should be 200 for body_error scenario
-    Run Keyword And Expect Error
-    ...    *${expected_body_status}*
+    ${expected_error}=    Set Variable    *${expected_body_status}*
+    Log    [NEGATIVE-CHECK][BODY] Expecting failure matching: ${expected_error}
+    ${status}    ${actual_error}=    Run Keyword And Ignore Error
     ...    Validate Response Status Is Successful    ${response}    ${response_json}
+    Log    [NEGATIVE-CHECK][BODY] Captured status=${status}
+    Log    [NEGATIVE-CHECK][BODY] Captured error=${actual_error}
+    Should Be Equal    ${status}    FAIL
+    ...    msg=[NEGATIVE-CHECK][BODY] Expected failure but validation passed. Expected pattern: ${expected_error}
+    Should Match    ${actual_error}    ${expected_error}
+    ...    msg=[NEGATIVE-CHECK][BODY] Failure mismatch. Expected pattern: ${expected_error} | Actual: ${actual_error}
+    Log    [NEGATIVE-CHECK][BODY] Expected failure matched: ${expected_error}
 
 Payment Methods Array Should Be Empty
     Length Should Be    ${payment_methods}    0    msg=payment_methods array should be empty
