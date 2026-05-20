@@ -29,7 +29,7 @@ Robot Framework API test suite for the MyDigipay checkout **payment methods** en
 - [Assumptions](#assumptions)
 - [Tags](#tags)
 - [Submission checklist](#submission-checklist)
-- [CI (GitHub Actions)](#ci-github-actions--bonus)
+- [CI (GitHub Actions)](#ci-github-actions)
 
 ---
 
@@ -176,6 +176,7 @@ A minimal **payment-method picker** shows how the API response could look on a c
 | Inactive / zero credit (N1, N2) | Options shown struck through (ineligible) |
 | HTTP 500 (N6) | Red error banner (fail fast) |
 | `body.status ≠ 200` | Error message (e.g. `body_error` scenario) |
+| Clickable BNPL + empty `options` | R4 violation scenario (`clickable_bnpl_empty_options`) |
 
 ### Try scenarios quickly
 
@@ -262,6 +263,7 @@ Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 | `empty_payment_methods.json` | `empty_payment_methods` | Scope: empty array |
 | `invalid_price_type.json` | `invalid_price_type` | R7: invalid enum |
 | `bnpl_blocked_empty_options.json` | `bnpl_blocked_empty_options` | P6: empty `options` |
+| `clickable_bnpl_empty_options.json` | `clickable_bnpl_empty_options` | N7 extension: clickable BNPL with empty `options` (R4) |
 
 </details>
 

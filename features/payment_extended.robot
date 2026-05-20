@@ -74,3 +74,15 @@ BNPL Blocked With Empty Options
     And BNPL Method Should Not Be Selectable Per Rule R2
     And BNPL Options Array Should Be Valid Per Rule R4
     And BNPL Options Array Should Be Empty
+
+
+Clickable BNPL With Empty Options - Rule R4 Violation
+    [Documentation]    N7 extension: clickable BNPL with empty options must fail Rule R4.
+    [Tags]    N7    bnpl    rule    R4
+
+    Given Payment API Is Available At    ${BASE_URL}
+    When User Requests Payment Methods With Scenario    clickable_bnpl_empty_options    ${CELL_NUMBER}
+    Then Response Body Should Match Testdata Fixture    clickable_bnpl_empty_options
+    And Response Status Should Be Successful
+    And Response Should Contain Payment Methods Array
+    And BNPL Business Rules Should Fail With Error    *Rule R4: clickable BNPL must have options*

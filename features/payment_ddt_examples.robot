@@ -28,6 +28,7 @@ DDT Negative Rule Coverage
     insufficient_credit    *Rule R5*
     inactive_bnpl          *Rule R5*
     multiple_default       *Rule R6*
+    clickable_bnpl_empty_options    *Rule R4: clickable BNPL must have options*
 
 
 *** Keywords ***
