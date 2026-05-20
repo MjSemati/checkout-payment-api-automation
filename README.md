@@ -346,7 +346,7 @@ And BNPL Business Rules Should Fail With Error    *Rule R5*
 
 ---
 
-## CI (GitHub Actions — bonus)
+## CI (GitHub Actions)
 
 ![Robot API Tests](https://github.com/MjSemati/checkout-payment-api-automation/actions/workflows/robot-tests.yml/badge.svg)
 
@@ -358,5 +358,20 @@ Workflow: `.github/workflows/robot-tests.yml`
 | Setup | Python 3.11, `pip install -r requirements.txt` |
 | Run | Start `fake_server`, then `robot --include required -d log features/` |
 | Artifact | Upload `log/` as **`robot-reports`** (even if tests fail) |
+
+### Manual run with tag filter (GitHub UI)
+
+You can trigger this workflow manually and run any Robot tag via `include_tag`.
+
+1. Go to **Actions** -> **Robot API Tests**
+2. Click **Run workflow**
+3. Select branch (`main`)
+4. Set `include_tag` to one of your tags, for example:
+   - `smoke`
+   - `required`
+   - `extended`
+   - `P1`, `N6`
+   - `ddt`, `ddt-positive`, `ddt-negative`
+5. Run workflow and download artifact **`robot-reports`**
 
 **View results:** GitHub repo → **Actions** → latest **Robot API Tests** run → **Artifacts** → download `robot-reports` → open `report.html`
