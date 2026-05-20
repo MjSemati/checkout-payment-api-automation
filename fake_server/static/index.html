@@ -95,6 +95,15 @@
       border-radius: 8px;
       font-size: 0.875rem;
     }
+    .warn {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
     .footer { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 1rem; }
     .pay-btn {
       width: 100%;
@@ -210,14 +219,23 @@
         if (m.type === "bnpl" && Array.isArray(m.options) && m.options.length) {
           const opts = document.createElement("div");
           opts.className = "options";
+          const eligibleDefaultCount = m.options.filter(
+            (o) => o.is_active && o.credit > 0 && o.is_default
+          ).length;
           m.options.forEach((o) => {
             const eligible = o.is_active && o.credit > 0;
             const row = document.createElement("label");
             row.className = "option" + (eligible ? "" : " ineligible");
-            const checked = eligible && o.is_default ? " checked" : "";
+            const checked = eligibleDefaultCount === 1 && eligible && o.is_default ? " checked" : "";
             row.innerHTML = `<span><input type="radio" name="bnpl-${m.id}"${checked} ${eligible ? "" : "disabled"} /> ${escapeHtml(o.title)} · credit ${formatCredit(o.credit)}</span><span class="badge">${escapeHtml(o.price_type || "")}</span>`;
             opts.appendChild(row);
           });
+          if (eligibleDefaultCount > 1) {
+            const warn = document.createElement("div");
+            warn.className = "warn";
+            warn.textContent = "Rule R6 violation: multiple eligible defaults found. No option is auto-selected.";
+            opts.prepend(warn);
+          }
           el.appendChild(opts);
         }
 
