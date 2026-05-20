@@ -1,8 +1,53 @@
 # Checkout Payment API Automation
 
-Robot Framework API test suite for the Digikala checkout **payment methods** endpoint (`GET /payment/`).
+![Robot API Tests](https://github.com/MjSemati/checkout-payment-api-automation/actions/workflows/robot-tests.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+![Robot Framework](https://img.shields.io/badge/Robot%20Framework-7.x-00C0B5)
+![Flask](https://img.shields.io/badge/fake%20server-Flask-000000)
 
-Validates JSON schema, types, business rules (R1–R7), and mandatory scenarios **S1–S8** from the task specification.
+Robot Framework API test suite for the MyDigipay checkout **payment methods** endpoint (`GET /payment/`).
+
+> [!NOTE]
+> Validates JSON schema, types, business rules **R1–R7**, and mandatory scenarios **S1–S8** from the task specification (+ optional extended coverage).
+
+**Repository:** https://github.com/MjSemati/checkout-payment-api-automation
+
+---
+
+## Table of contents
+
+- [Quick start](#quick-start)
+- [Approach](#approach)
+- [Project structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [How to run](#how-to-run)
+- [Sample checkout page (demo UI)](#sample-checkout-page-demo-ui)
+- [Scenarios covered (S1–S8)](#scenarios-covered-s1s8)
+- [Test data](#testdata-scenarios)
+- [Business rules validated](#business-rules-validated)
+- [Layering (BDD)](#layering-bdd)
+- [Assumptions](#assumptions)
+- [Tags](#tags)
+- [Submission checklist](#submission-checklist)
+- [CI (GitHub Actions)](#ci-github-actions--bonus)
+
+---
+
+## Quick start
+
+> [!TIP]
+> Run these in **two terminals** from the project root after `pip install -r requirements.txt`.
+
+```bash
+# Terminal 1 — fake API (+ demo checkout UI at http://127.0.0.1:8080/)
+python3 fake_server/app.py
+
+# Terminal 2 — mandatory scenarios (S1–S8)
+python3 -m robot --include required -d log features/
+
+# Open HTML report (macOS)
+open log/report.html
+```
 
 ---
 
@@ -10,7 +55,7 @@ Validates JSON schema, types, business rules (R1–R7), and mandatory scenarios 
 
 | Item | Choice |
 |------|--------|
-| Environment | **Local fake server** (no real Digikala backend) |
+| Environment | **Local fake server** (no real MyDigipay backend) |
 | Test data | **JSON fixtures** in `testdata/scenarios/` (served by fake server) |
 | Framework | **Robot Framework** + RequestsLibrary |
 | Style | **BDD** — business steps in `features/`, technical code in `steps/` and `apis/` |
@@ -37,7 +82,8 @@ checkout-payment-api-automation/
 ├── testdata/
 │   └── scenarios/*.json           ← one JSON file per scenario
 ├── fake_server/
-│   └── app.py
+│   ├── app.py
+│   └── static/index.html          ← optional demo checkout UI
 └── log/                           ← Robot reports (after run)
 ```
 
@@ -63,7 +109,18 @@ python3 fake_server/app.py
 Server: `http://127.0.0.1:8080`  
 Endpoint: `GET /payment/?scenario=<name>&CellNumber=<phone>`
 
-### 2. Run tests (new terminal)
+### 2. Try the sample checkout page (optional)
+
+With the server running, open in a browser:
+
+**http://127.0.0.1:8080/**
+
+Pick a scenario (e.g. `happy_path`, `bnpl_blocked`, `server_error`), enter a cell number, and click **Load payment methods**. The page calls the same fake API your Robot tests use.
+
+> [!NOTE]
+> This UI is **illustrative only** — it is not covered by Robot tests and does not submit real payments.
+
+### 3. Run tests (new terminal)
 
 ```bash
 python3 -m robot -d log features/
@@ -82,6 +139,52 @@ python3 -m robot --include required -d log features/      # mandatory S1–S8 on
 ### View reports
 
 Open `log/report.html` and `log/log.html` after a run.
+
+---
+
+## Sample checkout page (demo UI)
+
+A minimal **payment-method picker** shows how the API response could look on a checkout screen. It lives at `fake_server/static/index.html` and is served at **`http://127.0.0.1:8080/`** when the fake server is running.
+
+### Wireframe (happy path)
+
+```text
+┌─────────────────────────────────────┐
+│  Checkout — payment method          │
+│  Scenario: [ happy_path (S1)  ▼]    │
+│  Cell:     [ 09120000000        ]   │
+│           [ Load payment methods ]  │
+├─────────────────────────────────────┤
+│  ○ Online Payment          [online] │
+│  ○ Digital Wallet         [wallet]  │
+│  ● BNPL Payment             [bnpl]  │
+│      ◉ 1 installment · credit …     │
+│      ○ 3 installments · credit …    │
+├─────────────────────────────────────┤
+│        [ Pay (demo only) ]          │
+└─────────────────────────────────────┘
+```
+
+### What the demo reflects
+
+| API field / rule | UI behavior |
+|------------------|-------------|
+| `is_clickable=false` (S2) | Method grayed out, “Not selectable (Rule R2)” |
+| BNPL `options` (R4–R7) | Installment radios; default pre-selected |
+| Inactive / zero credit (S3, S4) | Options shown struck through (ineligible) |
+| HTTP 500 (S8) | Red error banner (fail fast) |
+| `body.status ≠ 200` | Error message (e.g. `body_error` scenario) |
+
+### Try scenarios quickly
+
+| Select in UI | PDF | What you see |
+|--------------|-----|----------------|
+| `happy_path` | S1 | Three methods, BNPL installments |
+| `bnpl_blocked` | S2 | BNPL disabled |
+| `server_error` | S8 | HTTP error message |
+| `empty_payment_methods` | — | “No payment methods” |
+
+Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 
 ---
 
@@ -143,7 +246,8 @@ Open `log/report.html` and `log/log.html` after a run.
 | `wrong_type.json` | `wrong_type` | S7 | Wrong field types |
 | `server_error.json` | `server_error` | S8 | HTTP 500 |
 
-**Extended scenarios** (`features/payment_extended.robot`, tag `extended`):
+<details>
+<summary><strong>Extended scenarios</strong> (<code>payment_extended.robot</code>, tag <code>extended</code>)</summary>
 
 | File | `?scenario=` | Covers |
 |------|----------------|--------|
@@ -152,6 +256,8 @@ Open `log/report.html` and `log/log.html` after a run.
 | `empty_payment_methods.json` | `empty_payment_methods` | Scope: empty array |
 | `invalid_price_type.json` | `invalid_price_type` | R7: invalid enum |
 | `bnpl_blocked_empty_options.json` | `bnpl_blocked_empty_options` | S2: empty `options` |
+
+</details>
 
 ### Data flow
 
@@ -229,14 +335,22 @@ And BNPL Business Rules Should Fail With Error    *Rule R5*
 - [x] README (this file)
 - [ ] Robot reports: `log/report.html`, `log/log.html`, `log/output.xml` after a test run
 
+> [!IMPORTANT]
+> CI publishes reports as a downloadable artifact — see [CI](#ci-github-actions--bonus) below if you do not attach local `log/` files.
+
 ---
 
 ## CI (GitHub Actions — bonus)
 
+![Robot API Tests](https://github.com/MjSemati/checkout-payment-api-automation/actions/workflows/robot-tests.yml/badge.svg)
+
 Workflow: `.github/workflows/robot-tests.yml`
 
-- Runs on **push** and **pull request** to `main`
-- Installs dependencies, starts `fake_server`, runs `robot --include required -d log features/`
-- Uploads **`log/`** as artifact `robot-reports` (even if tests fail)
+| Step | What happens |
+|------|----------------|
+| Trigger | Push or PR to `main` / `master` |
+| Setup | Python 3.11, `pip install -r requirements.txt` |
+| Run | Start `fake_server`, then `robot --include required -d log features/` |
+| Artifact | Upload `log/` as **`robot-reports`** (even if tests fail) |
 
-**View results:** GitHub repo → **Actions** tab → latest **Robot API Tests** run → **Artifacts** → download `robot-reports` → open `report.html`
+**View results:** GitHub repo → **Actions** → latest **Robot API Tests** run → **Artifacts** → download `robot-reports` → open `report.html`

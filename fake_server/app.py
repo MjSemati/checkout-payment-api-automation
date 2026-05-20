@@ -2,10 +2,11 @@ import json
 from pathlib import Path
 from typing import Tuple
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
 app = Flask(__name__)
 
+STATIC_DIR = Path(__file__).resolve().parent / "static"
 TESTDATA_DIR = Path(__file__).resolve().parent.parent / "testdata" / "scenarios"
 
 
@@ -17,6 +18,11 @@ def load_scenario(scenario: str) -> Tuple[dict, int]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     http_status = payload.pop("http_status", 200)
     return payload, http_status
+
+
+@app.route("/")
+def checkout_demo():
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 @app.route("/payment", methods=["GET"])
