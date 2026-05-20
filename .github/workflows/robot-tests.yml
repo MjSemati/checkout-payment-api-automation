@@ -5,6 +5,12 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      include_tag:
+        description: "Robot tag to run (e.g. smoke, required, extended)"
+        required: true
+        default: "required"
 
 jobs:
   robot-tests:
@@ -33,7 +39,7 @@ jobs:
             fi
             sleep 1
           done
-          python -m robot --include required -d log features/
+          python -m robot --include "${{ github.event.inputs.include_tag || 'required' }}" -d log features/
           kill $SERVER_PID || true
 
       - name: Upload Robot reports
