@@ -8,7 +8,7 @@
 Robot Framework API test suite for the MyDigipay checkout **payment methods** endpoint (`GET /payment/`).
 
 > [!NOTE]
-> Validates JSON schema, types, business rules **R1–R7**, and mandatory scenarios **S1–S8** from the task specification (+ optional extended coverage).
+> Validates JSON schema, types, business rules **R1–R7**, with **6 positive** and **6 negative** core scenarios (+ optional extended coverage).
 
 **Repository:** https://github.com/MjSemati/checkout-payment-api-automation
 
@@ -22,7 +22,7 @@ Robot Framework API test suite for the MyDigipay checkout **payment methods** en
 - [Prerequisites](#prerequisites)
 - [How to run](#how-to-run)
 - [Sample checkout page (demo UI)](#sample-checkout-page-demo-ui)
-- [Scenarios covered (S1–S8)](#scenarios-covered-s1s8)
+- [Scenarios covered (P1–P6, N1–N6)](#scenarios-covered-p1p6-n1n6)
 - [Test data](#testdata-scenarios)
 - [Business rules validated](#business-rules-validated)
 - [Layering (BDD)](#layering-bdd)
@@ -42,7 +42,7 @@ Robot Framework API test suite for the MyDigipay checkout **payment methods** en
 # Terminal 1 — fake API (+ demo checkout UI at http://127.0.0.1:8080/)
 python3 fake_server/app.py
 
-# Terminal 2 — mandatory scenarios (S1–S8)
+# Terminal 2 — core scenarios (P1–P6, N1–N6)
 python3 -m robot --include required -d log features/
 
 # Open HTML report (macOS)
@@ -71,8 +71,8 @@ checkout-payment-api-automation/
 ├── README.md
 ├── requirements.txt
 ├── features/                      ← BDD scenarios (business layer)
-│   ├── payment_positive.robot     ← S1, S2
-│   ├── payment_negative.robot     ← S3–S8 (required)
+│   ├── payment_positive.robot     ← P1–P6 (required)
+│   ├── payment_negative.robot     ← N1–N6 (required)
 │   └── payment_extended.robot     ← PDF gap coverage (extended tag)
 ├── steps/                         ← technical keywords
 │   ├── payment_keywords.robot
@@ -130,10 +130,10 @@ python3 -m robot -d log features/
 
 ```bash
 python3 -m robot --include smoke -d log features/
-python3 -m robot --include S5 -d log features/
+python3 -m robot --include P5 -d log features/
 python3 -m robot -d log features/payment_negative.robot
 python3 -m robot --include extended -d log features/    # optional extra coverage
-python3 -m robot --include required -d log features/      # mandatory S1–S8 only
+python3 -m robot --include required -d log features/      # core P1–P6 + N1–N6
 ```
 
 ### View reports
@@ -151,7 +151,7 @@ A minimal **payment-method picker** shows how the API response could look on a c
 ```text
 ┌─────────────────────────────────────┐
 │  Checkout — payment method          │
-│  Scenario: [ happy_path (S1)  ▼]    │
+│  Scenario: [ happy_path (P1)  ▼]    │
 │  Cell:     [ 09120000000        ]   │
 │           [ Load payment methods ]  │
 ├─────────────────────────────────────┤
@@ -169,37 +169,41 @@ A minimal **payment-method picker** shows how the API response could look on a c
 
 | API field / rule | UI behavior |
 |------------------|-------------|
-| `is_clickable=false` (S2) | Method grayed out, “Not selectable (Rule R2)” |
+| `is_clickable=false` (P2) | Method grayed out, “Not selectable (Rule R2)” |
 | BNPL `options` (R4–R7) | Installment radios; default pre-selected |
-| Inactive / zero credit (S3, S4) | Options shown struck through (ineligible) |
-| HTTP 500 (S8) | Red error banner (fail fast) |
+| Inactive / zero credit (N1, N2) | Options shown struck through (ineligible) |
+| HTTP 500 (N6) | Red error banner (fail fast) |
 | `body.status ≠ 200` | Error message (e.g. `body_error` scenario) |
 
 ### Try scenarios quickly
 
 | Select in UI | PDF | What you see |
 |--------------|-----|----------------|
-| `happy_path` | S1 | Three methods, BNPL installments |
-| `bnpl_blocked` | S2 | BNPL disabled |
-| `server_error` | S8 | HTTP error message |
+| `happy_path` | P1 | Three methods, BNPL installments |
+| `bnpl_blocked` | P2 | BNPL disabled |
+| `server_error` | N6 | HTTP error message |
 | `empty_payment_methods` | — | “No payment methods” |
 
 Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 
 ---
 
-## Scenarios covered (S1–S8)
+## Scenarios covered (P1–P6, N1–N6)
 
 | ID | Type | Description |
 |----|------|-------------|
-| S1 | Positive | Happy path: online, wallet, BNPL; all rules pass |
-| S2 | Rule | BNPL not clickable (`is_clickable=false`) |
-| S3 | Negative | BNPL `credit=0` → rule R5 |
-| S4 | Negative | BNPL `is_active=false` → rule R5 |
-| S5 | Negative | Multiple defaults among eligible → rule R6 |
-| S6 | Negative | Missing required field `type` → schema R1 |
-| S7 | Negative | Wrong types (`id`, `is_clickable`) → R1 |
-| S8 | Negative | HTTP 500; fail fast |
+| P1 | Positive | Happy path: online, wallet, BNPL; all rules pass |
+| P2 | Positive / Rule | BNPL not clickable (`is_clickable=false`) |
+| P3 | Positive / Contract | Payment method schema valid on happy path (R1) |
+| P4 | Positive / Rule | Wallet flag rule valid (`is_wallet` consistency, R3) |
+| P5 | Positive / Rule | BNPL R4-R7 valid on clickable happy path |
+| P6 | Positive / Rule | Non-clickable BNPL with empty `options` is valid (R2/R4) |
+| N1 | Negative | BNPL `credit=0` → rule R5 |
+| N2 | Negative | BNPL `is_active=false` → rule R5 |
+| N3 | Negative | Multiple defaults among eligible → rule R6 |
+| N4 | Negative | Missing required field `type` → schema R1 |
+| N5 | Negative | Wrong types (`id`, `is_clickable`) → R1 |
+| N6 | Negative | HTTP 500; fail fast |
 
 ---
 
@@ -225,9 +229,9 @@ Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `http_status` | No (default `200`) | HTTP status from fake server (`500` for S8) |
+| `http_status` | No (default `200`) | HTTP status from fake server (`500` for N6) |
 | `status` | Yes | Body status (`200` = OK for this task) |
-| `payment_methods` | Yes (except S8) | Array of payment methods |
+| `payment_methods` | Yes (except N6) | Array of payment methods |
 
 **Payment method (minimum):** `id` (int), `type`, `title`, `is_clickable`, `is_wallet` (bool); optional `description`, `source_id`, `options`.
 
@@ -237,25 +241,25 @@ Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 
 | File | `?scenario=` | PDF | Simulates |
 |------|----------------|-----|-----------|
-| `happy_path.json` | `happy_path` (default) | S1 | All methods valid |
-| `bnpl_blocked.json` | `bnpl_blocked` | S2 | BNPL not clickable |
-| `insufficient_credit.json` | `insufficient_credit` | S3 | `credit: 0` (R5) |
-| `inactive_bnpl.json` | `inactive_bnpl` | S4 | `is_active: false` (R5) |
-| `multiple_default.json` | `multiple_default` | S5 | Two defaults (R6) |
-| `missing_required_field.json` | `missing_required_field` | S6 | Missing `type` |
-| `wrong_type.json` | `wrong_type` | S7 | Wrong field types |
-| `server_error.json` | `server_error` | S8 | HTTP 500 |
+| `happy_path.json` | `happy_path` (default) | P1/P3/P4/P5 | All methods valid |
+| `bnpl_blocked.json` | `bnpl_blocked` | P2 | BNPL not clickable |
+| `insufficient_credit.json` | `insufficient_credit` | N1 | `credit: 0` (R5) |
+| `inactive_bnpl.json` | `inactive_bnpl` | N2 | `is_active: false` (R5) |
+| `multiple_default.json` | `multiple_default` | N3 | Two defaults (R6) |
+| `missing_required_field.json` | `missing_required_field` | N4 | Missing `type` |
+| `wrong_type.json` | `wrong_type` | N5 | Wrong field types |
+| `server_error.json` | `server_error` | N6 | HTTP 500 |
 
 <details>
 <summary><strong>Extended scenarios</strong> (<code>payment_extended.robot</code>, tag <code>extended</code>)</summary>
 
 | File | `?scenario=` | Covers |
 |------|----------------|--------|
-| `body_error.json` | `body_error` | S8: HTTP 200 + `body.status` 500 |
-| `missing_title.json` | `missing_title` | S6: missing `title` |
+| `body_error.json` | `body_error` | N6 extension: HTTP 200 + `body.status` 500 |
+| `missing_title.json` | `missing_title` | N4 extension: missing `title` |
 | `empty_payment_methods.json` | `empty_payment_methods` | Scope: empty array |
 | `invalid_price_type.json` | `invalid_price_type` | R7: invalid enum |
-| `bnpl_blocked_empty_options.json` | `bnpl_blocked_empty_options` | S2: empty `options` |
+| `bnpl_blocked_empty_options.json` | `bnpl_blocked_empty_options` | P6: empty `options` |
 
 </details>
 
@@ -312,7 +316,7 @@ And BNPL Business Rules Should Fail With Error    *Rule R5*
 3. **HTTP status** and **`body.status`** both checked on success paths.
 4. **BNPL** found by `type=bnpl`, not array index.
 5. **`http_status`** in JSON is meta only — stripped before body comparison.
-6. **No UI**, no real payments, no full price validation (per PDF scope).
+6. Demo UI is illustrative only (no real payment submission), and full price validation is out of scope.
 7. Use **`python3`** on macOS if `python` is not available.
 
 ---
@@ -322,9 +326,9 @@ And BNPL Business Rules Should Fail With Error    *Rule R5*
 | Tag | Meaning |
 |-----|---------|
 | `required` | Mandatory PDF scenario |
-| `smoke` | S1, S8 |
+| `smoke` | P1, N6 |
 | `positive` / `negative` | Suite split |
-| `S1`…`S8` | Traceability |
+| `P1`…`P6`, `N1`…`N6` | Traceability |
 | `R1`…`R7`, `bnpl`, `schema` | Filters |
 
 ---

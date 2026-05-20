@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Negative payment API scenarios (S3-S8).
+Documentation    Negative payment API scenarios (N1-N6).
 ...
 ...    Business steps (Given/When/Then) live in this file.
 ...    Technical implementation: steps/ and testdata/scenarios/
@@ -16,9 +16,9 @@ ${CELL_NUMBER}    09120000000
 
 
 *** Test Cases ***
-S3 Insufficient Credit - BNPL Option Ineligible
-    [Documentation]    S3 (negative): BNPL option has credit=0. Violates rule R5.
-    [Tags]    S3    required    bnpl    rule    R5
+N1 Insufficient Credit - BNPL Option Ineligible
+    [Documentation]    N1 (negative): BNPL option has credit=0. Violates rule R5.
+    [Tags]    N1    required    bnpl    rule    R5
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    insufficient_credit    ${CELL_NUMBER}
@@ -28,9 +28,9 @@ S3 Insufficient Credit - BNPL Option Ineligible
     And BNPL Business Rules Should Fail With Error    *Rule R5*
 
 
-S4 Non Active BNPL Option - Option Ineligible
-    [Documentation]    S4 (negative): BNPL option has is_active=false. Violates rule R5.
-    [Tags]    S4    required    bnpl    rule    R5
+N2 Non Active BNPL Option - Option Ineligible
+    [Documentation]    N2 (negative): BNPL option has is_active=false. Violates rule R5.
+    [Tags]    N2    required    bnpl    rule    R5
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    inactive_bnpl    ${CELL_NUMBER}
@@ -40,9 +40,9 @@ S4 Non Active BNPL Option - Option Ineligible
     And BNPL Business Rules Should Fail With Error    *Rule R5*
 
 
-S5 Multiple Default BNPL Options - Rule R6 Violation
-    [Documentation]    S5 (negative): multiple eligible BNPL options marked default. Violates R6.
-    [Tags]    S5    required    bnpl    rule    R6
+N3 Multiple Default BNPL Options - Rule R6 Violation
+    [Documentation]    N3 (negative): multiple eligible BNPL options marked default. Violates R6.
+    [Tags]    N3    required    bnpl    rule    R6
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    multiple_default    ${CELL_NUMBER}
@@ -52,9 +52,9 @@ S5 Multiple Default BNPL Options - Rule R6 Violation
     And BNPL Business Rules Should Fail With Error    *Rule R6*
 
 
-S6 Missing Required Field - Schema Validation Fails
-    [Documentation]    S6 (negative): payment method missing required field type. Violates R1.
-    [Tags]    S6    required    schema    contract    R1
+N4 Missing Required Field - Schema Validation Fails
+    [Documentation]    N4 (negative): payment method missing required field type. Violates R1.
+    [Tags]    N4    required    schema    contract    R1
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    missing_required_field    ${CELL_NUMBER}
@@ -64,9 +64,9 @@ S6 Missing Required Field - Schema Validation Fails
     And Payment Method Schema Should Fail With Error    *Dictionary does not contain key 'type'*
 
 
-S7 Wrong Field Type - Type Validation Fails
-    [Documentation]    S7 (negative): wrong field types on payment method. Violates R1.
-    [Tags]    S7    required    schema    contract    R1
+N5 Wrong Field Type - Type Validation Fails
+    [Documentation]    N5 (negative): wrong field types on payment method. Violates R1.
+    [Tags]    N5    required    schema    contract    R1
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    wrong_type    ${CELL_NUMBER}
@@ -76,9 +76,9 @@ S7 Wrong Field Type - Type Validation Fails
     And Payment Method Schema Should Fail With Error    *Rule R1*
 
 
-S8 Non Success HTTP Response - Fail Fast
-    [Documentation]    S8 (negative): HTTP 500. Fail fast with clear diagnostics.
-    [Tags]    S8    required    smoke    error-handling    fail-fast
+N6 Non Success HTTP Response - Fail Fast
+    [Documentation]    N6 (negative): HTTP 500. Fail fast with clear diagnostics.
+    [Tags]    N6    required    smoke    error-handling    fail-fast
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    server_error    ${CELL_NUMBER}

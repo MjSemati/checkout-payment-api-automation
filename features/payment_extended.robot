@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Extended coverage beyond mandatory S1-S8 (PDF scope gaps).
+Documentation    Extended coverage beyond core positive/negative suites.
 ...
 ...    Tag "extended" — run with: robot --include extended -d log features/
 Resource    ../steps/payment_keywords.robot
@@ -14,8 +14,8 @@ ${CELL_NUMBER}    09120000000
 
 *** Test Cases ***
 Body Status Error - Fail Fast On Non Success Body Status
-    [Documentation]    S8 extension: HTTP 200 but body.status=500 (PDF: body.status != 200).
-    [Tags]    S8    error-handling    fail-fast
+    [Documentation]    N6 extension: HTTP 200 but body.status=500 (PDF: body.status != 200).
+    [Tags]    N6    error-handling    fail-fast
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    body_error    ${CELL_NUMBER}
@@ -25,8 +25,8 @@ Body Status Error - Fail Fast On Non Success Body Status
 
 
 Missing Title - Schema Validation Fails
-    [Documentation]    S6 extension: payment method missing required field title (PDF: type/title).
-    [Tags]    S6    schema    contract    R1
+    [Documentation]    N4 extension: payment method missing required field title (PDF: type/title).
+    [Tags]    N4    schema    contract    R1
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    missing_title    ${CELL_NUMBER}
@@ -62,8 +62,8 @@ Invalid Price Type - Rule R7 Violation
 
 
 BNPL Blocked With Empty Options
-    [Documentation]    S2 extension: BNPL not clickable and options array is empty (PDF: options may be empty).
-    [Tags]    S2    rule    bnpl    R2    R4
+    [Documentation]    P6 extension: BNPL not clickable and options array is empty (PDF: options may be empty).
+    [Tags]    P6    rule    bnpl    R2    R4
 
     Given Payment API Is Available At    ${BASE_URL}
     When User Requests Payment Methods With Scenario    bnpl_blocked_empty_options    ${CELL_NUMBER}

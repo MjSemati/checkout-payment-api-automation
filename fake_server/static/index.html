@@ -119,14 +119,14 @@
     <div class="panel">
       <label for="scenario">Test scenario</label>
       <select id="scenario">
-        <option value="happy_path">happy_path (S1)</option>
-        <option value="bnpl_blocked">bnpl_blocked (S2)</option>
-        <option value="insufficient_credit">insufficient_credit (S3)</option>
-        <option value="inactive_bnpl">inactive_bnpl (S4)</option>
-        <option value="multiple_default">multiple_default (S5)</option>
-        <option value="missing_required_field">missing_required_field (S6)</option>
-        <option value="wrong_type">wrong_type (S7)</option>
-        <option value="server_error">server_error (S8)</option>
+        <option value="happy_path">happy_path (P1/P3/P4/P5)</option>
+        <option value="bnpl_blocked">bnpl_blocked (P2)</option>
+        <option value="insufficient_credit">insufficient_credit (N1)</option>
+        <option value="inactive_bnpl">inactive_bnpl (N2)</option>
+        <option value="multiple_default">multiple_default (N3)</option>
+        <option value="missing_required_field">missing_required_field (N4)</option>
+        <option value="wrong_type">wrong_type (N5)</option>
+        <option value="server_error">server_error (N6)</option>
         <option value="body_error">body_error (extended)</option>
         <option value="empty_payment_methods">empty_payment_methods</option>
       </select>
@@ -168,7 +168,7 @@
       try {
         const res = await fetch(url);
         if (!res.ok) {
-          statusEl.innerHTML = `<div class="error">HTTP ${res.status} — fail fast (e.g. S8)</div>`;
+          statusEl.innerHTML = `<div class="error">HTTP ${res.status} — fail fast (e.g. N6)</div>`;
           return;
         }
         const data = await res.json();
