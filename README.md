@@ -231,8 +231,12 @@ And BNPL Business Rules Should Fail With Error    *Rule R5*
 
 ---
 
-## Optional (bonus)
+## CI (GitHub Actions — bonus)
 
-- CI (GitHub Actions / GitLab): install → start server → `robot -d log features/` → publish `log/`
-- `body_error` scenario: HTTP 200 + `body.status=500`
-- `.gitignore` for `__pycache__/`, `.idea/`
+Workflow: `.github/workflows/robot-tests.yml`
+
+- Runs on **push** and **pull request** to `main`
+- Installs dependencies, starts `fake_server`, runs `robot --include required -d log features/`
+- Uploads **`log/`** as artifact `robot-reports` (even if tests fail)
+
+**View results:** GitHub repo → **Actions** tab → latest **Robot API Tests** run → **Artifacts** → download `robot-reports` → open `report.html`

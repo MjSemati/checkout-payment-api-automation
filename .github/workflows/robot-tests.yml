@@ -1,0 +1,45 @@
+name: Robot API Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  robot-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Start fake server and run Robot tests
+        run: |
+          python fake_server/app.py &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8080/payment?scenario=happy_path > /dev/null; then
+              echo "Fake server is ready"
+              break
+            fi
+            sleep 1
+          done
+          python -m robot --include required -d log features/
+          kill $SERVER_PID || true
+
+      - name: Upload Robot reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-reports
+          path: log/
+          retention-days: 14
