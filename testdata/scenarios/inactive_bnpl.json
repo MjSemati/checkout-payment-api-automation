@@ -29,7 +29,7 @@
           "source_id": 386,
           "title": "1 installment",
           "credit": 50000000,
-          "is_active": false,
+          "is_active": true,
           "is_default": true,
           "price_type": "CASH_PRICE"
         },
@@ -37,7 +37,7 @@
           "source_id": 387,
           "title": "3 installments",
           "credit": 409361033,
-          "is_active": true,
+          "is_active": false,
           "is_default": false,
           "price_type": "CREDIT_PRICE"
         }
