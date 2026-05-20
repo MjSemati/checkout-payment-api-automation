@@ -8,6 +8,14 @@
       "title": "Online Payment",
       "is_clickable": "true",
       "is_wallet": false
+    },
+    {
+      "id": 11,
+      "type": "digital_wallet",
+      "title": "Digital Wallet",
+      "is_clickable": true,
+      "is_wallet": "false",
+      "source_id": 316
     }
   ]
 }

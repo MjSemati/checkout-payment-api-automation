@@ -60,7 +60,7 @@ N4 Missing Required Field - Schema Validation Fails
 
 
 N5 Wrong Field Type - Type Validation Fails
-    [Documentation]    N5 (negative): wrong field types on payment method. Violates R1.
+    [Documentation]    N5 (negative): wrong field types on payment methods (same layout as N4). Violates R1.
     [Tags]    N5    required    schema    contract    R1
 
     Given Checkout Payment API Is Available
@@ -68,7 +68,7 @@ N5 Wrong Field Type - Type Validation Fails
     Then Response Body Should Match Testdata Fixture    wrong_type
     And Response Status Should Be Successful
     And Response Should Contain Payment Methods Array
-    And Payment Method Schema Should Fail With Error    *Rule R1*
+    And Payment Method Schema Should Fail With Error    *Rule R1: id must be int*
 
 
 N6 Non Success HTTP Response - Fail Fast

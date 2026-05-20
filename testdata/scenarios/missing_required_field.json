@@ -7,6 +7,13 @@
       "is_clickable": true,
       "is_wallet": false,
       "title": "Online Payment"
+    },
+    {
+      "id": 11,
+      "title": "Digital Wallet",
+      "is_clickable": true,
+      "is_wallet": true,
+      "source_id": 316
     }
   ]
 }

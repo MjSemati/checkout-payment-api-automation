@@ -192,25 +192,68 @@
       }
     }
 
+    const REQUIRED_METHOD_FIELDS = ["id", "type", "title", "is_clickable", "is_wallet"];
+
+    function getContractIssues(m) {
+      const issues = [];
+      for (const key of REQUIRED_METHOD_FIELDS) {
+        if (!(key in m)) issues.push(`missing ${key}`);
+      }
+      if ("id" in m && typeof m.id !== "number") issues.push("id must be int");
+      if ("type" in m && typeof m.type !== "string") issues.push("type must be str");
+      if ("title" in m && typeof m.title !== "string") issues.push("title must be str");
+      if ("is_clickable" in m && typeof m.is_clickable !== "boolean") issues.push("is_clickable must be bool");
+      if ("is_wallet" in m && typeof m.is_wallet !== "boolean") issues.push("is_wallet must be bool");
+      return issues;
+    }
+
+    function contractBannerMessage(methods) {
+      const allIssues = methods.flatMap((m) => getContractIssues(m));
+      const hasMissing = allIssues.some((i) => i.startsWith("missing "));
+      const hasInvalid = allIssues.some((i) => !i.startsWith("missing "));
+      if (hasMissing && hasInvalid) {
+        return "Invalid or incomplete payment method data (Rule R1). Methods with missing or wrong field types are not selectable.";
+      }
+      if (hasMissing) {
+        return "Incomplete payment method data (Rule R1). Methods with missing required fields are not selectable.";
+      }
+      return "Invalid payment method field types (Rule R1). Methods with wrong field types are not selectable.";
+    }
+
+    function isMethodSelectable(m) {
+      return m.is_clickable === true && getContractIssues(m).length === 0;
+    }
+
     function renderMethods(methods) {
       if (!methods.length) {
         statusEl.innerHTML = '<div class="error">No payment methods returned.</div>';
         return;
       }
+      const invalidCount = methods.filter((m) => getContractIssues(m).length > 0).length;
+      if (invalidCount > 0) {
+        statusEl.innerHTML = `<div class="warn">${escapeHtml(contractBannerMessage(methods))}</div>`;
+      }
       methods.forEach((m) => {
+        const contractIssues = getContractIssues(m);
+        const selectable = isMethodSelectable(m);
         const el = document.createElement("div");
-        el.className = "method" + (m.is_clickable ? "" : " disabled");
+        el.className = "method" + (selectable ? "" : " disabled");
         el.dataset.id = m.id;
 
         const head = document.createElement("div");
         head.className = "method-head";
-        head.innerHTML = `<span class="method-title">${escapeHtml(m.title || m.type)}</span><span class="badge">${escapeHtml(m.type)}</span>`;
+        const typeLabel = m.type != null ? m.type : "invalid";
+        head.innerHTML = `<span class="method-title">${escapeHtml(m.title || typeLabel)}</span><span class="badge">${escapeHtml(typeLabel)}</span>`;
         el.appendChild(head);
 
-        if (!m.is_clickable) {
+        if (!selectable) {
           const note = document.createElement("p");
           note.style.cssText = "margin:0.35rem 0 0;font-size:0.8rem;color:var(--muted)";
-          note.textContent = "Not selectable (Rule R2)";
+          if (contractIssues.length) {
+            note.textContent = `Not selectable (Rule R1): ${contractIssues.join(", ")}`;
+          } else {
+            note.textContent = "Not selectable (Rule R2)";
+          }
           el.appendChild(note);
         } else {
           el.addEventListener("click", () => selectMethod(el, m));

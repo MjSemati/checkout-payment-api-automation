@@ -205,7 +205,7 @@ Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 | N2 | Negative | BNPL `is_active=false` → rule R5 |
 | N3 | Negative | Multiple defaults among eligible → rule R6 |
 | N4 | Negative | Missing required field `type` → schema R1 |
-| N5 | Negative | Wrong types (`id`, `is_clickable`) → R1 |
+| N5 | Negative | Wrong types on Online + Wallet (like N4 layout) → R1 |
 | N6 | Negative | HTTP 500; fail fast |
 
 > [!NOTE]
@@ -253,7 +253,7 @@ Source file: [`fake_server/static/index.html`](fake_server/static/index.html)
 | `inactive_bnpl.json` | `inactive_bnpl` | N2 | `is_active: false` (R5) |
 | `multiple_default.json` | `multiple_default` | N3 | Two defaults (R6) |
 | `missing_required_field.json` | `missing_required_field` | N4 | Missing `type` |
-| `wrong_type.json` | `wrong_type` | N5 | Wrong field types |
+| `wrong_type.json` | `wrong_type` | N5 | Wrong field types (`id`, `is_clickable`, `is_wallet`) |
 | `server_error.json` | `server_error` | N6 | HTTP 500 |
 
 <details>
