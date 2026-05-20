@@ -1,0 +1,30 @@
+{
+  "http_status": 200,
+  "status": 200,
+  "payment_methods": [
+    {
+      "id": 1,
+      "type": "online",
+      "title": "Online Payment",
+      "is_clickable": true,
+      "is_wallet": false
+    },
+    {
+      "id": 11,
+      "type": "wallet",
+      "title": "Digital Wallet",
+      "is_clickable": true,
+      "is_wallet": true,
+      "source_id": 316
+    },
+    {
+      "id": 8,
+      "type": "bnpl",
+      "title": "BNPL Payment",
+      "is_clickable": true,
+      "is_wallet": false,
+      "source_id": 367,
+      "options": []
+    }
+  ]
+}

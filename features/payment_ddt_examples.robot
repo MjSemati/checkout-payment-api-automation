@@ -6,11 +6,6 @@ Resource    ../steps/testdata_keywords.robot
 
 Default Tags    payment-api    checkout    ddt    example    optional
 
-*** Variables ***
-${BASE_URL}       http://127.0.0.1:8080
-${CELL_NUMBER}    09120000000
-
-
 *** Test Cases ***
 DDT Positive Rule Coverage
     [Documentation]    Template-driven positive checks across multiple scenarios.
@@ -34,8 +29,8 @@ DDT Negative Rule Coverage
 *** Keywords ***
 DDT Positive Scenario Should Be Valid
     [Arguments]    ${scenario}    @{expected_types}
-    Given Payment API Is Available At    ${BASE_URL}
-    When User Requests Payment Methods With Scenario    ${scenario}    ${CELL_NUMBER}
+    Given Checkout Payment API Is Available
+    When User Requests Payment Methods With Scenario    ${scenario}
     Then Response Body Should Match Testdata Fixture    ${scenario}
     And Response Status Should Be Successful
     And Response Should Contain Payment Methods Array
@@ -53,8 +48,8 @@ DDT Positive Scenario Should Be Valid
 
 DDT BNPL Rules Should Fail
     [Arguments]    ${scenario}    ${expected_error}
-    Given Payment API Is Available At    ${BASE_URL}
-    When User Requests Payment Methods With Scenario    ${scenario}    ${CELL_NUMBER}
+    Given Checkout Payment API Is Available
+    When User Requests Payment Methods With Scenario    ${scenario}
     Then Response Body Should Match Testdata Fixture    ${scenario}
     And Response Status Should Be Successful
     And Response Should Contain Payment Methods Array

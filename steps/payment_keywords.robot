@@ -5,6 +5,7 @@ Resource    testdata_keywords.robot
 
 *** Variables ***
 ${BASE_URL}    http://127.0.0.1:8080
+${DEFAULT_CELL_NUMBER}    09120000000
 
 *** Keywords ***
 # --- Low-level validators (used by Then steps) ---
@@ -120,13 +121,19 @@ Store Response Context
 
 # --- BDD steps (use Given/When/Then/And in features; prefixes are stripped by Robot) ---
 
+Given Checkout Payment API Is Available
+    Checkout Payment API Is Available
+
+Checkout Payment API Is Available
+    Payment API Is Available At    ${BASE_URL}
+
 Payment API Is Available At
     [Arguments]    ${base_url}=${BASE_URL}
     Set Test Variable    ${BASE_URL}    ${base_url}
     Log    Payment API is expected at ${BASE_URL} (start fake_server/app.py)
 
 User Requests Payment Methods With Scenario
-    [Arguments]    ${scenario}    ${cell_number}=${EMPTY}
+    [Arguments]    ${scenario}    ${cell_number}=${DEFAULT_CELL_NUMBER}
     ${endpoint}=    Build Payment Endpoint    ${scenario}    ${cell_number}
     ${response}=    Get Payment Methods Response    ${BASE_URL}    ${endpoint}
     Store Response Context    ${response}
