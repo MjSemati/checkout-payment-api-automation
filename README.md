@@ -73,6 +73,7 @@ checkout-payment-api-automation/
 ├── features/                      ← BDD scenarios (business layer)
 │   ├── payment_positive.robot     ← P1–P6 (required)
 │   ├── payment_negative.robot     ← N1–N6 (required)
+│   ├── payment_ddt_examples.robot ← optional template-based DDT examples
 │   └── payment_extended.robot     ← PDF gap coverage (extended tag)
 ├── steps/                         ← technical keywords
 │   ├── payment_keywords.robot
@@ -132,6 +133,7 @@ python3 -m robot -d log features/
 python3 -m robot --include smoke -d log features/
 python3 -m robot --include P5 -d log features/
 python3 -m robot -d log features/payment_negative.robot
+python3 -m robot -d log features/payment_ddt_examples.robot   # optional DDT examples
 python3 -m robot --include extended -d log features/    # optional extra coverage
 python3 -m robot --include required -d log features/      # core P1–P6 + N1–N6
 ```

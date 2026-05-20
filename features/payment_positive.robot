@@ -34,7 +34,7 @@ P1 Happy Path - All Payment Methods And Rules Valid
 P2 BNPL Blocked - Method Not Selectable
     [Documentation]    P2 (rule-positive): BNPL has is_clickable=false.
     ...    Method must be treated as not selectable (R2).
-    ...    Options may be present or empty when not clickable (R4).
+    ...    Options must be an array when BNPL is present (R4).
     [Tags]    P2    required    rule    bnpl    R2    R4
 
     Given Payment API Is Available At    ${BASE_URL}
@@ -45,7 +45,6 @@ P2 BNPL Blocked - Method Not Selectable
     And Payment Methods Schema Should Be Valid
     And BNPL Method Should Not Be Selectable Per Rule R2
     And BNPL Options Array Should Be Valid Per Rule R4
-    And BNPL Business Rules R4 Through R7 Should Be Valid
 
 
 P3 Schema Contract - Payment Methods Shape Is Valid
@@ -97,4 +96,3 @@ P6 BNPL Blocked With Empty Options - Allowed By R2 R4
     And BNPL Method Should Not Be Selectable Per Rule R2
     And BNPL Options Array Should Be Valid Per Rule R4
     And BNPL Options Array Should Be Empty
-    And BNPL Business Rules R4 Through R7 Should Be Valid

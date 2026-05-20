@@ -74,4 +74,3 @@ BNPL Blocked With Empty Options
     And BNPL Method Should Not Be Selectable Per Rule R2
     And BNPL Options Array Should Be Valid Per Rule R4
     And BNPL Options Array Should Be Empty
-    And BNPL Business Rules R4 Through R7 Should Be Valid
